@@ -132,20 +132,22 @@ export const ActionControls: React.FC<ActionControlsProps> = ({
             <span className="hidden sm:inline">Share</span>
           </motion.button>
 
-          {/* Light a Diya for someone button */}
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onOpenPersonalize}
-            className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full luxury-glass border border-amber-500/30 text-amber-200 text-xs font-sans font-medium flex items-center gap-1.5 hover:border-amber-400 hover:text-amber-100 shadow-glow-sm transition-all"
-            title="Create and send your own personalized Diya"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span className="hidden xs:inline">Light for Someone</span>
-            <span className="xs:hidden">Send Diya</span>
-          </motion.button>
+          {/* Light a Diya for someone button (Scenes 1 - 5) */}
+          {currentScene >= 1 && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onOpenPersonalize}
+              className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full luxury-glass border border-amber-500/30 text-amber-200 text-xs font-sans font-medium flex items-center gap-1.5 hover:border-amber-400 hover:text-amber-100 shadow-glow-sm transition-all"
+              title="Create and send your own personalized Diya"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden xs:inline">Light for Someone</span>
+              <span className="xs:hidden">Send Diya</span>
+            </motion.button>
+          )}
 
           {/* Sound Toggle */}
           <motion.button
