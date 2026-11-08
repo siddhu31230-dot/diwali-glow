@@ -6,7 +6,7 @@ import { CinematicCanvas, CinematicCanvasHandle } from './components/CinematicCa
 import { RealisticDiya } from './components/RealisticDiya';
 import { FloatingDiyas } from './components/FloatingDiyas';
 import { SceneNarrative } from './components/SceneNarrative';
-import { InitialTrigger } from './components/InitialTrigger';
+import { HeroSection } from './components/HeroSection';
 import { ActionControls } from './components/ActionControls';
 import { DevotionalDarshan } from './components/DevotionalDarshan';
 import { PersonalizeModal } from './components/PersonalizeModal';
@@ -178,11 +178,14 @@ export const App: React.FC = () => {
         onOpenDarshan={() => setIsDarshanOpen(true)}
       />
 
-      {/* 6. Initial User Gesture / "Tap to Light" Trigger */}
+      {/* 6. Unforgettable Cinematic Hero Section */}
       {currentScene === 0 && (
-        <InitialTrigger
+        <HeroSection
           greetingData={greetingData}
-          onStart={handleStartExperience}
+          onStartExperience={handleStartExperience}
+          onOpenPersonalize={() => setIsPersonalizeOpen(true)}
+          onOpenDarshan={() => setIsDarshanOpen(true)}
+          onQuickShare={() => setIsPersonalizeOpen(true)}
         />
       )}
 

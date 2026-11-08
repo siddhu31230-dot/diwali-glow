@@ -363,9 +363,10 @@ export const CinematicCanvas = forwardRef<CinematicCanvasHandle, CinematicCanvas
       );
 
       if (currentScene === 0) {
-        bgGradient.addColorStop(0, '#0a0214');
-        bgGradient.addColorStop(0.5, '#05010b');
-        bgGradient.addColorStop(1, '#020005');
+        bgGradient.addColorStop(0, '#150529');
+        bgGradient.addColorStop(0.35, '#0d031c');
+        bgGradient.addColorStop(0.7, '#070214');
+        bgGradient.addColorStop(1, '#030009');
       } else if (currentScene === 1) {
         bgGradient.addColorStop(0, '#24083a');
         bgGradient.addColorStop(0.3, '#130324');
@@ -393,8 +394,8 @@ export const CinematicCanvas = forwardRef<CinematicCanvasHandle, CinematicCanvas
         ctx.fill();
       });
 
-      // 2.5 Celestial Divine Golden Rays (Temple Atmosphere, Scenes 1 - 5)
-      if (currentScene >= 1) {
+      // 2.5 Celestial Divine Golden Rays (Temple Atmosphere, Scenes 0 - 5)
+      if (currentScene >= 0) {
         ctx.save();
         const rayOriginX = width * 0.5;
         const rayOriginY = height * 0.12;
@@ -425,8 +426,9 @@ export const CinematicCanvas = forwardRef<CinematicCanvasHandle, CinematicCanvas
             rayOriginY,
             rayLength
           );
-          rayGrad.addColorStop(0, 'rgba(254, 240, 138, 0.12)');
-          rayGrad.addColorStop(0.35, 'rgba(245, 158, 11, 0.05)');
+          const rayAlpha = currentScene === 0 ? 0.08 : 0.12;
+          rayGrad.addColorStop(0, `rgba(254, 240, 138, ${rayAlpha})`);
+          rayGrad.addColorStop(0.35, `rgba(245, 158, 11, ${rayAlpha * 0.4})`);
           rayGrad.addColorStop(1, 'rgba(245, 158, 11, 0)');
 
           ctx.fillStyle = rayGrad;
@@ -867,9 +869,9 @@ export const CinematicCanvas = forwardRef<CinematicCanvasHandle, CinematicCanvas
         ctx.globalAlpha = 1;
       }
 
-      // 10. Marigold & Lotus Petals Shower (Scenes 1 - 5)
-      if (currentScene >= 1) {
-        const maxPetals = currentScene >= 4 ? 65 : currentScene === 1 ? 30 : 45;
+      // 10. Marigold & Lotus Petals Shower (Scenes 0 - 5)
+      if (currentScene >= 0) {
+        const maxPetals = currentScene >= 4 ? 65 : currentScene === 0 ? 22 : currentScene === 1 ? 30 : 45;
         if (marigoldPetals.current.length < maxPetals && Math.random() > 0.35) {
           marigoldPetals.current.push(spawnPetal(width));
         }

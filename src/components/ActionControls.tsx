@@ -118,6 +118,20 @@ export const ActionControls: React.FC<ActionControlsProps> = ({
             </motion.button>
           )}
 
+          {/* Share Diwali Glow Button */}
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleWhatsAppShare}
+            className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-500/40 text-emerald-200 text-xs font-sans font-medium flex items-center gap-1.5 shadow-sm transition-all"
+            title="Share Diwali Glow on WhatsApp"
+          >
+            <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="hidden sm:inline">Share</span>
+          </motion.button>
+
           {/* Light a Diya for someone button */}
           <motion.button
             initial={{ opacity: 0, scale: 0.8 }}
