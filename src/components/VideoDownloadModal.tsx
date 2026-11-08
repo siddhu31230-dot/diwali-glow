@@ -61,9 +61,13 @@ export const VideoDownloadModal: React.FC<VideoDownloadModalProps> = ({
         },
       });
 
-      // Prepare clean safe filename
-      const cleanSender = greetingData.senderName.replace(/[^a-zA-Z0-9]/g, '_');
-      const filename = `Diwali_Greeting_From_${cleanSender}.${selectedFormat}`;
+      // Prepare clean safe filename (defense against path traversal, invalid characters, and empty names)
+      const rawClean = (greetingData.senderName || 'Diya')
+        .replace(/[^a-zA-Z0-9_-]/g, '_')
+        .slice(0, 32);
+      const cleanSender = rawClean.replace(/^_+|_+$/g, '') || 'Diya';
+      const safeFormat = selectedFormat === 'mp4' ? 'mp4' : 'webm';
+      const filename = `Diwali_Greeting_From_${cleanSender}.${safeFormat}`;
 
       DiwaliVideoRecorder.downloadBlob(blob, filename);
       setDownloadReady(true);

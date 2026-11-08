@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { SceneStep, GreetingData } from './types';
-import { parseGreetingFromUrl, DEFAULT_GREETING } from './utils/urlParams';
+import { parseGreetingFromUrl, DEFAULT_GREETING, updateBrowserUrl } from './utils/urlParams';
 import { audioService } from './utils/audio';
 import { CinematicCanvas, CinematicCanvasHandle } from './components/CinematicCanvas';
 import { RealisticDiya } from './components/RealisticDiya';
@@ -114,6 +114,7 @@ export const App: React.FC = () => {
   // Update greeting and preview
   const handleSaveAndPreview = (newData: GreetingData) => {
     setGreetingData(newData);
+    updateBrowserUrl(newData);
     startCinematicSequence();
     showToast(
       'Diwali Greeting Updated! ✨',
