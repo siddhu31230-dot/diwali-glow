@@ -26,6 +26,7 @@ interface ActionControlsProps {
   onReplay: () => void;
   onOpenPersonalize: () => void;
   onOpenVideoDownload: () => void;
+  onOpenDarshan?: () => void;
   greetingData: GreetingData;
   onShowToast?: (title: string, message?: string, type?: 'success' | 'share') => void;
 }
@@ -37,6 +38,7 @@ export const ActionControls: React.FC<ActionControlsProps> = ({
   onReplay,
   onOpenPersonalize,
   onOpenVideoDownload,
+  onOpenDarshan,
   greetingData,
   onShowToast,
 }) => {
@@ -99,6 +101,23 @@ export const ActionControls: React.FC<ActionControlsProps> = ({
 
         {/* Top Right: Light Diya & Audio Toggle */}
         <div className="flex items-center gap-2 pointer-events-auto">
+          {/* Devotional Darshan Button */}
+          {onOpenDarshan && currentScene >= 1 && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onOpenDarshan}
+              className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full luxury-glass border border-amber-500/30 text-amber-200 text-xs font-sans font-medium flex items-center gap-1.5 hover:border-amber-400 hover:text-amber-100 shadow-glow-sm transition-all"
+              title="Devotional Darshan of Lord Ganesha & Goddess Lakshmi"
+            >
+              <span>🪔</span>
+              <span className="hidden xs:inline">पावन दर्शन</span>
+              <span className="xs:hidden">दर्शन</span>
+            </motion.button>
+          )}
+
           {/* Light a Diya for someone button */}
           <motion.button
             initial={{ opacity: 0, scale: 0.8 }}

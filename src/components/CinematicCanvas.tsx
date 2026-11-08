@@ -247,14 +247,14 @@ export const CinematicCanvas = forwardRef<CinematicCanvasHandle, CinematicCanvas
     }
   }, [currentScene]);
 
-  // Spawn Marigold Petal
+  // Spawn Marigold & Lotus Petal
   const spawnPetal = (canvasWidth: number) => {
-    const colors = ['#ff8800', '#ffa200', '#ffbb00', '#ffdd00', '#e65100'];
+    const colors = ['#ff8800', '#ffa200', '#ffbb00', '#ffdd00', '#e65100', '#f472b6', '#fb7185', '#fda4af'];
     return {
       x: Math.random() * canvasWidth,
       y: -20 - Math.random() * 30,
       vx: (Math.random() - 0.5) * 0.8,
-      vy: 1.2 + Math.random() * 1.6,
+      vy: 1.1 + Math.random() * 1.5,
       size: 9 + Math.random() * 8,
       rotation: Math.random() * Math.PI * 2,
       rotationSpeed: (Math.random() - 0.5) * 0.035,
@@ -392,6 +392,48 @@ export const CinematicCanvas = forwardRef<CinematicCanvasHandle, CinematicCanvas
         ctx.arc(x, y, star.size, 0, Math.PI * 2);
         ctx.fill();
       });
+
+      // 2.5 Celestial Divine Golden Rays (Temple Atmosphere, Scenes 1 - 5)
+      if (currentScene >= 1) {
+        ctx.save();
+        const rayOriginX = width * 0.5;
+        const rayOriginY = height * 0.12;
+        const rayCount = 14;
+        const rayLength = Math.max(width, height) * 0.95;
+        const baseAngle = time * 0.0001;
+
+        for (let r = 0; r < rayCount; r++) {
+          const angle = baseAngle + (r * Math.PI * 2) / rayCount;
+          const spread = 0.06;
+          ctx.beginPath();
+          ctx.moveTo(rayOriginX, rayOriginY);
+          ctx.lineTo(
+            rayOriginX + Math.cos(angle - spread) * rayLength,
+            rayOriginY + Math.sin(angle - spread) * rayLength
+          );
+          ctx.lineTo(
+            rayOriginX + Math.cos(angle + spread) * rayLength,
+            rayOriginY + Math.sin(angle + spread) * rayLength
+          );
+          ctx.closePath();
+
+          const rayGrad = ctx.createRadialGradient(
+            rayOriginX,
+            rayOriginY,
+            15,
+            rayOriginX,
+            rayOriginY,
+            rayLength
+          );
+          rayGrad.addColorStop(0, 'rgba(254, 240, 138, 0.12)');
+          rayGrad.addColorStop(0.35, 'rgba(245, 158, 11, 0.05)');
+          rayGrad.addColorStop(1, 'rgba(245, 158, 11, 0)');
+
+          ctx.fillStyle = rayGrad;
+          ctx.fill();
+        }
+        ctx.restore();
+      }
 
       // 3. Central Diya Ambient Radial Bloom
       if (currentScene >= 1) {
@@ -825,10 +867,10 @@ export const CinematicCanvas = forwardRef<CinematicCanvasHandle, CinematicCanvas
         ctx.globalAlpha = 1;
       }
 
-      // 10. Marigold Petals Shower (Scenes 2, 3, 4, 5)
-      if (currentScene >= 2) {
-        const maxPetals = currentScene >= 4 ? 65 : 40;
-        if (marigoldPetals.current.length < maxPetals && Math.random() > 0.4) {
+      // 10. Marigold & Lotus Petals Shower (Scenes 1 - 5)
+      if (currentScene >= 1) {
+        const maxPetals = currentScene >= 4 ? 65 : currentScene === 1 ? 30 : 45;
+        if (marigoldPetals.current.length < maxPetals && Math.random() > 0.35) {
           marigoldPetals.current.push(spawnPetal(width));
         }
 

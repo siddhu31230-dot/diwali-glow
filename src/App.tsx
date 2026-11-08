@@ -8,6 +8,7 @@ import { FloatingDiyas } from './components/FloatingDiyas';
 import { SceneNarrative } from './components/SceneNarrative';
 import { InitialTrigger } from './components/InitialTrigger';
 import { ActionControls } from './components/ActionControls';
+import { DevotionalDarshan } from './components/DevotionalDarshan';
 import { PersonalizeModal } from './components/PersonalizeModal';
 import { VideoDownloadModal } from './components/VideoDownloadModal';
 import { CrackerControls } from './components/CrackerControls';
@@ -20,6 +21,7 @@ export const App: React.FC = () => {
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [isPersonalizeOpen, setIsPersonalizeOpen] = useState<boolean>(false);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
+  const [isDarshanOpen, setIsDarshanOpen] = useState<boolean>(false);
   const [toast, setToast] = useState<ToastData | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -147,9 +149,18 @@ export const App: React.FC = () => {
       {/* 3. Floating Peripheral Diyas (Scenes 2 - 5) */}
       <FloatingDiyas currentScene={currentScene} />
 
+      {/* 3.5 Devotional Darshan of Lord Ganesha & Goddess Lakshmi (Scenes 1 to 5) */}
+      <DevotionalDarshan
+        currentScene={currentScene}
+        isLit={isLit}
+        isModalOpen={isDarshanOpen}
+        onOpenModal={() => setIsDarshanOpen(true)}
+        onCloseModal={() => setIsDarshanOpen(false)}
+      />
+
       {/* 4. Central Heroic Diya */}
       {currentScene >= 1 && (
-        <div className="absolute bottom-16 sm:bottom-20 inset-x-0 mx-auto flex items-center justify-center z-15 pointer-events-auto">
+        <div className="absolute bottom-16 sm:bottom-20 inset-x-0 mx-auto flex items-center justify-center pointer-events-auto" style={{ zIndex: 20 }}>
           <RealisticDiya
             currentScene={currentScene}
             isLit={isLit}
@@ -164,6 +175,7 @@ export const App: React.FC = () => {
         currentScene={currentScene}
         greetingData={greetingData}
         onOpenPersonalize={() => setIsPersonalizeOpen(true)}
+        onOpenDarshan={() => setIsDarshanOpen(true)}
       />
 
       {/* 6. Initial User Gesture / "Tap to Light" Trigger */}
@@ -184,7 +196,7 @@ export const App: React.FC = () => {
         onToggleSparkler={() => canvasHandleRef.current?.toggleSparkler()}
       />
 
-      {/* 8. Action Controls (Mute, Replay, Share, Video Download, Create Diya) */}
+      {/* 8. Action Controls (Mute, Replay, Share, Video Download, Create Diya, Darshan) */}
       <ActionControls
         currentScene={currentScene}
         isMuted={isMuted}
@@ -192,6 +204,7 @@ export const App: React.FC = () => {
         onReplay={handleReplay}
         onOpenPersonalize={() => setIsPersonalizeOpen(true)}
         onOpenVideoDownload={() => setIsVideoModalOpen(true)}
+        onOpenDarshan={() => setIsDarshanOpen(true)}
         greetingData={greetingData}
         onShowToast={showToast}
       />
