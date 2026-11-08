@@ -7,24 +7,54 @@
 class DiwaliAudioEngine {
   private ctx: AudioContext | null = null;
   private isMuted: boolean = false;
-  private isPlaying: boolean = false;
   private masterGain: GainNode | null = null;
-  private ambientGain: GainNode | null = null;
-  private ambientOscillators: OscillatorNode[] = [];
-  private chimeTimer: number | null = null;
+  private bgmAudio: HTMLAudioElement | null = null;
+  private musicVolume: number = 0.32;
+  private isMusicPlaying: boolean = false;
+  private listeners: Set<(state: { isPlaying: boolean; isMuted: boolean }) => void> = new Set();
+
+  constructor() {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = sessionStorage.getItem('diwali_music_muted');
+        if (saved !== null) {
+          this.isMuted = saved === 'true';
+        }
+      } catch {
+        // Ignore session storage errors
+      }
+    }
+  }
+
+  public subscribe(callback: (state: { isPlaying: boolean; isMuted: boolean }) => void) {
+    this.listeners.add(callback);
+    callback({ isPlaying: this.isMusicPlaying, isMuted: this.isMuted });
+    return () => {
+      this.listeners.delete(callback);
+    };
+  }
+
+  private notify() {
+    const state = { isPlaying: this.isMusicPlaying, isMuted: this.isMuted };
+    this.listeners.forEach((cb) => {
+      try {
+        cb(state);
+      } catch {
+        // Listener error safety
+      }
+    });
+  }
 
   private initContext() {
     if (!this.ctx) {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.ctx = new AudioContextClass();
 
       this.masterGain = this.ctx.createGain();
       this.masterGain.gain.setValueAtTime(this.isMuted ? 0 : 0.65, this.ctx.currentTime);
       this.masterGain.connect(this.ctx.destination);
-
-      this.ambientGain = this.ctx.createGain();
-      this.ambientGain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-      this.ambientGain.connect(this.masterGain);
     }
 
     if (this.ctx.state === 'suspended') {
@@ -32,11 +62,87 @@ class DiwaliAudioEngine {
     }
   }
 
+  private initMusic() {
+    if (typeof window === 'undefined') return;
+    if (!this.bgmAudio) {
+      this.bgmAudio = new Audio('/audio/diwali_devotional_bgm.mp3');
+      this.bgmAudio.loop = true;
+      this.bgmAudio.preload = 'auto';
+      this.bgmAudio.volume = this.isMuted ? 0 : this.musicVolume;
+      this.bgmAudio.id = 'diwali-devotional-bgm';
+      try {
+        if (!document.getElementById('diwali-devotional-bgm')) {
+          document.body.appendChild(this.bgmAudio);
+        }
+      } catch {}
+
+      this.bgmAudio.addEventListener('play', () => {
+        this.isMusicPlaying = true;
+        this.notify();
+      });
+      this.bgmAudio.addEventListener('pause', () => {
+        this.isMusicPlaying = false;
+        this.notify();
+      });
+    }
+  }
+
+  public async playMusic(): Promise<boolean> {
+    this.initContext();
+    this.initMusic();
+    if (!this.bgmAudio) return false;
+
+    try {
+      this.bgmAudio.volume = this.isMuted ? 0 : this.musicVolume;
+      const res = this.bgmAudio.play();
+      if (res !== undefined) {
+        await res;
+      }
+      this.isMusicPlaying = true;
+      this.notify();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  public pauseMusic() {
+    if (this.bgmAudio) {
+      this.bgmAudio.pause();
+      this.isMusicPlaying = false;
+      this.notify();
+    }
+  }
+
+  public toggleMusic(): boolean {
+    if (this.isMusicPlaying) {
+      this.pauseMusic();
+      return false;
+    } else {
+      this.playMusic();
+      return true;
+    }
+  }
+
+  public toggleMute(): boolean {
+    const next = !this.isMuted;
+    this.setMuted(next);
+    return next;
+  }
+
   public setMuted(muted: boolean) {
     this.isMuted = muted;
+    try {
+      sessionStorage.setItem('diwali_music_muted', String(muted));
+    } catch {}
+
+    if (this.bgmAudio) {
+      this.bgmAudio.volume = muted ? 0 : this.musicVolume;
+    }
     if (this.masterGain && this.ctx) {
       this.masterGain.gain.setTargetAtTime(muted ? 0 : 0.65, this.ctx.currentTime, 0.05);
     }
+    this.notify();
   }
 
   public getIsMuted(): boolean {
@@ -44,7 +150,11 @@ class DiwaliAudioEngine {
   }
 
   public getIsPlaying(): boolean {
-    return this.isPlaying;
+    return this.isMusicPlaying;
+  }
+
+  public getIsMusicPlaying(): boolean {
+    return this.isMusicPlaying;
   }
 
   /**
@@ -412,77 +522,14 @@ class DiwaliAudioEngine {
   }
 
   /**
-   * Starts Indian Festive Meditative Drone & Melodic Santoor/Flute chimes
+   * Starts peaceful devotional instrumental BGM (Flute, Sitar, Tabla, Temple Bells)
    */
   public startFestiveAmbience() {
-    this.initContext();
-    if (this.isPlaying || !this.ctx || !this.ambientGain) return;
-
-    this.isPlaying = true;
-    const now = this.ctx.currentTime;
-
-    // Indian Raga drone frequencies (Tuning around D: Sa-Pa)
-    const droneFreqs = [73.42, 110.0, 146.83, 220.0, 293.66]; // D2, A2, D3, A3, D4
-
-    this.ambientOscillators = droneFreqs.map((freq, idx) => {
-      const osc = this.ctx!.createOscillator();
-      const gain = this.ctx!.createGain();
-
-      osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
-      osc.frequency.setValueAtTime(freq, now);
-
-      // Subtle slow detune vibrato LFO
-      const lfo = this.ctx!.createOscillator();
-      const lfoGain = this.ctx!.createGain();
-      lfo.frequency.setValueAtTime(0.15 + idx * 0.04, now);
-      lfoGain.gain.setValueAtTime(1.2, now);
-      lfo.connect(osc.frequency);
-      lfo.start(now);
-
-      const baseVol = 0.04 / (idx + 1);
-      gain.gain.setValueAtTime(0.001, now);
-      gain.gain.linearRampToValueAtTime(baseVol, now + 3);
-
-      osc.connect(gain);
-      gain.connect(this.ambientGain!);
-      osc.start(now);
-
-      return osc;
-    });
-
-    // Schedule gentle melodic chimes in Indian festive pentatonic scale (Bhoopali: D, E, F#, A, B, D')
-    const festiveScale = [293.66, 329.63, 369.99, 440.0, 493.88, 587.33, 659.25, 739.99, 880.0];
-    let noteIdx = 0;
-
-    const playRandomChime = () => {
-      if (!this.isPlaying || this.isMuted || !this.ctx) return;
-      const freq = festiveScale[noteIdx % festiveScale.length];
-      noteIdx = (noteIdx + Math.floor(Math.random() * 3) + 1) % festiveScale.length;
-      this.playTempleBell(freq, 0);
-
-      // Random delay between 2.5s and 5.5s
-      const nextDelay = 2500 + Math.random() * 3000;
-      this.chimeTimer = window.setTimeout(playRandomChime, nextDelay);
-    };
-
-    this.chimeTimer = window.setTimeout(playRandomChime, 2000);
+    this.playMusic();
   }
 
   public stopFestiveAmbience() {
-    this.isPlaying = false;
-    if (this.chimeTimer) {
-      clearTimeout(this.chimeTimer);
-      this.chimeTimer = null;
-    }
-    this.ambientOscillators.forEach((osc) => {
-      try {
-        osc.stop();
-        osc.disconnect();
-      } catch {
-        // Already stopped
-      }
-    });
-    this.ambientOscillators = [];
+    this.pauseMusic();
   }
 }
 

@@ -28,19 +28,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, filter: 'blur(14px)', transition: { duration: 1.1 } }}
-      className="fixed inset-0 z-40 flex flex-col items-center justify-between px-4 py-6 sm:py-8 overflow-y-auto pointer-events-auto"
+      className="fixed inset-0 z-30 flex flex-col items-center justify-between px-4 py-6 sm:py-8 overflow-y-auto pointer-events-none"
     >
-      {/* Top Bar Hint & Quick Share */}
-      <div className="w-full max-w-4xl flex items-center justify-between text-xs font-sans text-amber-300/80 pt-[env(safe-area-inset-top)] z-10">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-400/20 text-amber-300 text-[11px] sm:text-xs">
-          <span>🪔</span>
-          <span className="font-serif">Diwali Glow 2026</span>
-        </div>
-
+      {/* Top Bar Quick Actions */}
+      <div className="w-full max-w-4xl flex items-center justify-end text-xs font-sans text-amber-300/80 pt-[env(safe-area-inset-top)] z-10 pointer-events-auto">
         {onQuickShare && (
           <button
             onClick={onQuickShare}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 hover:bg-amber-500/30 border border-amber-400/30 text-amber-200 text-[11px] sm:text-xs font-medium transition-all shadow-sm active:scale-95"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/15 hover:bg-amber-500/30 border border-amber-400/30 text-amber-200 text-[11px] sm:text-xs font-medium transition-all shadow-sm active:scale-95"
             title="Share Diwali Glow"
           >
             <Share2 className="w-3 h-3 text-amber-400" />
@@ -54,7 +49,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         initial={{ scale: 0.94, y: 16 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-        className="my-auto flex flex-col items-center text-center max-w-2xl w-full px-2 sm:px-4 z-10"
+        className="my-auto flex flex-col items-center text-center max-w-2xl w-full px-2 sm:px-4 z-10 pointer-events-auto"
       >
         {/* Personalized Dedicated Tag if sent with custom names */}
         {isPersonalized && (

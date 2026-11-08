@@ -9,6 +9,7 @@ import { SceneNarrative } from './components/SceneNarrative';
 import { HeroSection } from './components/HeroSection';
 import { ActionControls } from './components/ActionControls';
 import { DevotionalDarshan } from './components/DevotionalDarshan';
+import { FloatingMusicPlayer } from './components/FloatingMusicPlayer';
 import { PersonalizeModal } from './components/PersonalizeModal';
 import { VideoDownloadModal } from './components/VideoDownloadModal';
 import { CrackerControls } from './components/CrackerControls';
@@ -177,6 +178,9 @@ export const App: React.FC = () => {
         onOpenPersonalize={() => setIsPersonalizeOpen(true)}
         onOpenDarshan={() => setIsDarshanOpen(true)}
       />
+
+      {/* 5.5 Floating Devotional Instrumental Music Player (All Scenes) */}
+      <FloatingMusicPlayer onShowToast={showToast} />
 
       {/* 6. Unforgettable Cinematic Hero Section */}
       {currentScene === 0 && (

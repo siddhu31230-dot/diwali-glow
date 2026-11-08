@@ -92,7 +92,7 @@ export const ActionControls: React.FC<ActionControlsProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: currentScene >= 1 ? 0.8 : 0 }}
           transition={{ duration: 1 }}
-          className="flex items-center gap-2 pointer-events-auto"
+          className="hidden sm:flex items-center gap-2 pointer-events-auto pl-32 md:pl-44"
         >
           <span className="font-serif text-amber-300 text-xs sm:text-sm tracking-widest uppercase font-medium flex items-center gap-1.5 drop-shadow-sm">
             <span>✨</span> Diwali Glow
