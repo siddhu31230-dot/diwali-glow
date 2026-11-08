@@ -23,13 +23,13 @@ export const FloatingMusicPlayer: React.FC<FloatingMusicPlayerProps> = ({ onShow
     e.stopPropagation();
     if (isPlaying) {
       audioService.pauseMusic();
-      onShowToast?.('Music Paused ⏸️', 'Devotional instrumental paused', 'share');
+      onShowToast?.('Chant Paused ⏸️', 'Sacred Om chanting paused', 'share');
     } else {
       const started = await audioService.playMusic();
       if (started) {
         onShowToast?.(
-          'Devotional Flute & Sitar 🎶',
-          'Soft bansuri, sitar, tabla & temple bells playing',
+          'ॐ Sacred Om Chant 🪔',
+          'Vedic "Ooooom... Oooom..." chant with tanpura & temple bells',
           'success'
         );
       }
@@ -89,11 +89,11 @@ export const FloatingMusicPlayer: React.FC<FloatingMusicPlayerProps> = ({ onShow
         <div
           className="hidden md:flex flex-col text-left leading-tight cursor-pointer"
           onClick={handleTogglePlay}
-          title="Diwali Devotional Instrumental (Bansuri, Sitar, Tabla & Temple Bells)"
+          title="Sacred Vedic Om Chanting (ॐ • Ooooom... Oooom...)"
         >
           <span className="text-[11px] font-serif font-semibold text-amber-200 tracking-wide flex items-center gap-1">
             <Music className="w-3 h-3 text-amber-400" />
-            <span>Devotional BGM</span>
+            <span>ॐ Om Chant</span>
           </span>
           <span className="text-[9px] font-sans text-amber-300/60 tracking-wider">
             {isPlaying ? (isMuted ? 'Muted' : 'Playing') : 'Paused'}
